@@ -161,24 +161,80 @@
 
         @media screen and (max-width: 768px) {
             .video-container {
-                margin: 0;
-                border-radius: 0;
-                padding-top: 100vh; /* Full viewport height on mobile */
+                margin: 1rem auto;
+                border-radius: 16px;
+                padding-top: 56.25%; /* Maintain aspect ratio */
             }
             
             video {
-                border-radius: 0;
-                object-fit: contain; /* Better fit for mobile */
+                border-radius: 16px;
+                object-fit: cover;
             }
         }
 
-        /* Add fullscreen styles for mobile */
-        :fullscreen .video-container,
-        :-webkit-full-screen .video-container,
-        :-moz-full-screen .video-container {
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
+        /* Add these new styles */
+        .security-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .camera-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: monospace;
+            font-size: 16px;
+            text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .recording-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .recording-dot.active {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .video-filter {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;  /* Changed from 'contain' to 'cover' */
+            background: #000;
+            border-radius: 24px;
+            -webkit-transform: none;
+            transform: none;
         }
 
         @media screen and (max-width: 768px) {
@@ -460,39 +516,36 @@
         const videoContainer = document.getElementById('videoContainer');
         const video = document.getElementById('securityVideo');
 
-        // Auto fullscreen on mobile
-        function autoFullscreenOnMobile() {
-            // Only handle fullscreen when explicitly requested
-            video.addEventListener('click', (e) => {
-                // Prevent automatic fullscreen on mobile
-                e.stopPropagation();
-            });
+        // Only handle fullscreen when explicitly requested
+        video.addEventListener('click', (e) => {
+            // Prevent automatic fullscreen on mobile
+            e.stopPropagation();
+        });
 
-            // Remove previous fullscreen event listeners
-            video.removeEventListener('fullscreenchange', handleFullscreen);
-            video.removeEventListener('webkitfullscreenchange', handleFullscreen);
-            video.removeEventListener('mozfullscreenchange', handleFullscreen);
+        // Remove previous fullscreen event listeners
+        video.removeEventListener('fullscreenchange', handleFullscreen);
+        video.removeEventListener('webkitfullscreenchange', handleFullscreen);
+        video.removeEventListener('mozfullscreenchange', handleFullscreen);
 
-            function handleFullscreen() {
-                if (document.fullscreenElement || 
-                    document.webkitFullscreenElement || 
-                    document.mozFullScreenElement) {
-                    videoContainer.requestFullscreen().catch(err => {
-                        console.log(`Error attempting to enable fullscreen: ${err.message}`);
-                    });
-                }
+        function handleFullscreen() {
+            if (document.fullscreenElement || 
+                document.webkitFullscreenElement || 
+                document.mozFullScreenElement) {
+                videoContainer.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
             }
-
-            video.addEventListener('click', () => {
-                if (video.requestFullscreen) {
-                    videoContainer.requestFullscreen();
-                } else if (video.webkitRequestFullscreen) {
-                    videoContainer.webkitRequestFullscreen();
-                } else if (video.mozRequestFullScreen) {
-                    videoContainer.mozRequestFullScreen();
-                }
-            });
         }
+
+        video.addEventListener('click', () => {
+            if (video.requestFullscreen) {
+                videoContainer.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                videoContainer.webkitRequestFullscreen();
+            } else if (video.mozRequestFullScreen) {
+                videoContainer.mozRequestFullScreen();
+            }
+        });
     </script>
 </body>
 <footer style="text-align: center; padding: 2rem 0; color: rgba(255, 255, 255, 0.6); font-size: 14px;">
