@@ -447,6 +447,7 @@
     </script>
     <script>
         // Replace the existing updateDateTime function with this new code
+        const videoContainer = document.getElementById('videoContainer');
         const video = document.getElementById('securityVideo');
         const startDate = new Date('2024-09-14T10:10:00');
         const recordingDot = document.querySelector('.recording-dot');
@@ -494,6 +495,34 @@
             updateDateTime();
             if (!video.paused) {
                 recordingDot.classList.add('active');
+            }
+        });
+    </script>
+    <script>
+        const videoContainer = document.getElementById('videoContainer');
+        const video = document.getElementById('securityVideo');
+
+        video.addEventListener('fullscreenchange', handleFullscreen);
+        video.addEventListener('webkitfullscreenchange', handleFullscreen);
+        video.addEventListener('mozfullscreenchange', handleFullscreen);
+
+        function handleFullscreen() {
+            if (document.fullscreenElement || 
+                document.webkitFullscreenElement || 
+                document.mozFullScreenElement) {
+                videoContainer.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            }
+        }
+
+        video.addEventListener('click', () => {
+            if (video.requestFullscreen) {
+                videoContainer.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                videoContainer.webkitRequestFullscreen();
+            } else if (video.mozRequestFullScreen) {
+                videoContainer.mozRequestFullScreen();
             }
         });
     </script>
