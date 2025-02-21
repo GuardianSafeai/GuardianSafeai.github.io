@@ -98,6 +98,20 @@
             background: #147CE5;
         }
 
+        .thank-you-message {
+            display: none;
+            text-align: center;
+            font-size: 24px;
+            color: var(--primary);
+            margin-top: 2rem;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
         @media screen and (max-width: 768px) {
             .container {
                 width: 95%;
@@ -110,7 +124,7 @@
 <body>
     <div class="container">
         <h1>Request a Demo</h1>
-        <form action="https://formsubmit.co/gsbusiness@guardiansafe.org" method="POST">
+        <form id="demoForm" action="https://formsubmit.co/gsbusiness@guardiansafe.org" method="POST">
             <!-- Add these hidden inputs for FormSubmit configuration -->
             <input type="hidden" name="_subject" value="New Demo Request from GuardianAI">
             <input type="hidden" name="_template" value="table">
@@ -127,7 +141,8 @@
             </div>
             
             <div class="form-group">
-                <label for="company">Organization (Company, School, or Business)</label>                <input type="text" id="company" name="company" required>
+                <label for="company">Organization (Company, School, or Business)</label>
+                <input type="text" id="company" name="company" required>
             </div>
             
             <div class="form-group">
@@ -137,6 +152,9 @@
             
             <button type="submit" class="submit-button">Send Request</button>
         </form>
+        <div class="thank-you-message" id="thankYouMessage">
+            Thank you for your request! We'll get back to you soon.
+        </div>
     </div>
 
     <script>
@@ -148,6 +166,18 @@
             setTimeout(() => {
                 container.style.opacity = '1';
             }, 500);
+
+            const form = document.getElementById('demoForm');
+            const thankYouMessage = document.getElementById('thankYouMessage');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                thankYouMessage.style.display = 'block'; // Show the thank you message
+                form.style.display = 'none'; // Hide the form
+                setTimeout(() => {
+                    form.submit(); // Submit the form after showing the message
+                }, 2000); // Delay to allow the animation to play
+            });
         });
     </script>
 </body>
